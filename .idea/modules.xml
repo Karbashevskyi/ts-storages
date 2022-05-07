@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ts-storages.iml" filepath="$PROJECT_DIR$/.idea/ts-storages.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/ts-asserts.iml" filepath="$PROJECT_DIR$/.idea/ts-asserts.iml" />
     </modules>
   </component>
 </project>

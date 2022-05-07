@@ -1,5 +1,6 @@
 import {LocalStorageInterface} from './interfaces/local-storage.interface';
 import {Is} from 'ts-checkers';
+import {Asserts} from 'ts-asserts';
 
 export class LocalStorage {
 
@@ -83,7 +84,7 @@ export class LocalStorage {
         dontUseJsonDecode: boolean = false
     ): any {
 
-        // Asserts.assertNotNullOrUndefined(object);
+        Asserts.assertNotNullOrUndefined(object);
 
         if (object?.CHECKED === false) { // Don`t refactoring, it`s special check
 
