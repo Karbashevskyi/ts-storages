@@ -46,6 +46,6 @@
     "typescript": "^4.6.3"
   },
   "dependencies": {
-    "ts-checkers": "^0.0.3"
+    "ts-checkers": "^0.0.4"
   }
 }
