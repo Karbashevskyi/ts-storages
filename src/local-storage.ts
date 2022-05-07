@@ -1,40 +1,32 @@
 import {LocalStorageInterface} from './interfaces/local-storage.interface';
 import {Is} from 'ts-checkers';
 import {Asserts} from 'ts-asserts';
+import {defaultState} from './local-storage-keys';
 
 export class LocalStorage {
 
+    // TODO add global configuration of user id and application name and other!
     public static get applicationName(): string {
 
-        // const version: string = this.get() // TODO get version from localStorage
-
-        return '';
+        return this.get(defaultState.MAIN.APPLICATION_NAME);
 
     }
 
     public static get version(): string {
 
-        // const version: string = this.get() // TODO get version from localStorage
-
-        return '';
+        return this.get(defaultState.MAIN.VERSION_APP);
 
     }
 
     public static get userId(): string {
 
-        // const version: string = this.get() // TODO get version from localStorage
-
-        return '';
+        return this.get(defaultState.MAIN.USER_ID);
 
     }
 
     public static get keyOfLastApplicationVersionList(): LocalStorageInterface {
 
-        // const version: string = this.get() // TODO get version from localStorage
-
-        //LocalStorageConst.COMMON.PREV_VERSION_APP
-
-        return {} as any;
+        return this.get(defaultState.MAIN.PREV_VERSION_APP);
 
     }
 
