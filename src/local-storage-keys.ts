@@ -47,9 +47,9 @@ export class LocalStorageKey {
 
     /**
      *
-     * @param category
-     * @param key
-     * @param value
+     * @param category must be string
+     * @param key must be string
+     * @param value must be LocalStorageInterface
      */
     public static set(category: string, key: string, value: LocalStorageInterface): void {
        this.#state[category][key] = value;
@@ -57,8 +57,8 @@ export class LocalStorageKey {
 
     /**
      *
-     * @param category
-     * @param key
+     * @param category must be string
+     * @param key must be string
      */
     public static remove(category: string, key: string): void {
        delete this.#state[category][key];
