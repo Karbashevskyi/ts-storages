@@ -32,9 +32,10 @@ export const defaultState = {
             DONT_CHECK_VERSION: true
         },
         APPLICATION_NAME: {
-            CURRENT: `0.2`,
+            CURRENT: `0.3`,
             PREVIOUS: [],
             CHECKED: false,
+            WITH_APPLICATION_NAME: false,
             DONT_CHECK_VERSION: true
         }
     }
