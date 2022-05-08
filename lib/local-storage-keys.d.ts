@@ -45,15 +45,15 @@ export declare class LocalStorageKey {
     #private;
     /**
      *
-     * @param category
-     * @param key
-     * @param value
+     * @param category must be string
+     * @param key must be string
+     * @param value must be LocalStorageInterface
      */
     static set(category: string, key: string, value: LocalStorageInterface): void;
     /**
      *
-     * @param category
-     * @param key
+     * @param category must be string
+     * @param key must be string
      */
     static remove(category: string, key: string): void;
     static get state(): StructureType;
