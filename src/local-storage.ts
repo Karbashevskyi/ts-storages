@@ -1,294 +1,251 @@
-import {LocalStorageInterface} from './interfaces/local-storage.interface';
-import {Is} from 'ts-checkers';
-import {defaultState} from './local-storage-keys';
-import {ArgumentsIsNotNullOrUndefined} from 'package-ts-decorators-asserts';
+import { LocalStorageInterface } from './interfaces/local-storage.interface';
+import { Is } from 'ts-checkers';
+import { defaultState } from './local-storage-keys';
+import { ArgumentsIsNotNullOrUndefined } from 'package-ts-decorators-asserts';
 
 export class LocalStorage {
+  // TODO add global configuration of user id and application name and other!
+  public static get applicationName(): string {
+    return this.get(defaultState.MAIN.APPLICATION_NAME);
+  }
 
-    // TODO add global configuration of user id and application name and other!
-    public static get applicationName(): string {
+  public static get version(): string {
+    return this.get(defaultState.MAIN.VERSION_APP);
+  }
 
-        return this.get(defaultState.MAIN.APPLICATION_NAME);
+  public static get userId(): string {
+    return this.get(defaultState.MAIN.USER_ID);
+  }
 
+  public static get prevVersionList(): string[] {
+    return this.get(defaultState.MAIN.PREV_VERSION_APP);
+  }
+
+  /**
+   *
+   * @param object must be LocalStorageInterface
+   */
+  @ArgumentsIsNotNullOrUndefined()
+  public static remove(object: LocalStorageInterface): void {
+    localStorage.removeItem(
+      this.buildKey({
+        currentName: object.CURRENT,
+        withUserId: object?.WITH_USER_ID ?? false,
+        ...(object?.DONT_CHECK_VERSION
+          ? {}
+          : {
+              version: this.version,
+            }),
+      }),
+    );
+  }
+
+  /**
+   *
+   * @param object must be LocalStorageInterface type
+   * @param value any type
+   * @param dontUseJsonEncode optional argument and type is boolean
+   */
+  @ArgumentsIsNotNullOrUndefined()
+  public static set(object: LocalStorageInterface, value: any, dontUseJsonEncode: boolean = false): void {
+    if (!dontUseJsonEncode) {
+      value = JSON.stringify(value);
     }
 
-    public static get version(): string {
+    localStorage.setItem(
+      this.buildKey({
+        currentName: object.CURRENT,
+        withUserId: object?.WITH_USER_ID ?? false,
+        withApplicationName: object?.WITH_APPLICATION_NAME ?? false,
+        ...(object?.DONT_CHECK_VERSION
+          ? {}
+          : {
+              version: this.version,
+            }),
+      }),
+      value,
+    );
+  }
 
-        return this.get(defaultState.MAIN.VERSION_APP);
+  /**
+   *
+   * @param object must be LocalStorageInterface type
+   * @param dontUseJsonDecode optional and type is boolean
+   */
+  @ArgumentsIsNotNullOrUndefined()
+  public static get(object: LocalStorageInterface, dontUseJsonDecode: boolean = false): any {
+    // let value: any;
+    let value: any = this.checkPrevious(object, dontUseJsonDecode);
 
+    if (Is.notNullOrUndefined(value)) {
+      return value;
     }
 
-    public static get userId(): string {
+    value = localStorage.getItem(
+      this.buildKey({
+        currentName: object.CURRENT,
+        withUserId: object?.WITH_USER_ID ?? false,
+        withApplicationName: object?.WITH_APPLICATION_NAME ?? true,
+        ...(object?.DONT_CHECK_VERSION
+          ? {}
+          : {
+              version: this.version,
+            }),
+      }),
+    );
 
-        return this.get(defaultState.MAIN.USER_ID);
-
+    if (dontUseJsonDecode) {
+      return value;
+    } else {
+      try {
+        return JSON.parse(value);
+      } catch (e) {
+        return null;
+      }
     }
+  }
 
-    public static get prevVersionList(): string[] {
+  /**
+   *
+   * @param currentName must be string type
+   * @param previous must be array of string type
+   * @param withApplicationName optional and type is boolean
+   * @param withUserId optional and type is boolean
+   * @param dontCheckVersion optional and type is boolean
+   * @param dontUseJsonDecode optional and type is boolean
+   * @private
+   */
+  @ArgumentsIsNotNullOrUndefined()
+  private static mergePrevious({
+    currentName,
+    previous,
+    withApplicationName = true,
+    withUserId = false,
+    dontCheckVersion = false,
+    dontUseJsonDecode = false,
+  }: {
+    currentName: string;
+    previous: string[];
+    withApplicationName?: boolean;
+    withUserId?: boolean;
+    dontCheckVersion?: boolean;
+    dontUseJsonDecode?: boolean;
+  }): any {
+    let result: any = null;
 
-        return this.get(defaultState.MAIN.PREV_VERSION_APP);
+    if (previous?.length) {
+      // Check prev names
+      previous.forEach((prev) => {
+        const item = localStorage.getItem(prev);
 
-    }
-
-    /**
-     *
-     * @param object must be LocalStorageInterface
-     */
-    @ArgumentsIsNotNullOrUndefined()
-    public static remove(
-        object: LocalStorageInterface
-    ): void {
-
-        localStorage.removeItem(this.buildKey({
-            currentName: object.CURRENT,
-            withUserId: object?.WITH_USER_ID ?? false,
-            ...(object?.DONT_CHECK_VERSION ? {} : {
-                version: this.version,
-            })
-        }));
-
-    }
-
-    /**
-     *
-     * @param object must be LocalStorageInterface type
-     * @param value any type
-     * @param dontUseJsonEncode optional argument and type is boolean
-     */
-    @ArgumentsIsNotNullOrUndefined()
-    public static set(
-        object: LocalStorageInterface,
-        value: any,
-        dontUseJsonEncode: boolean = false
-    ): void {
-
-        if (!dontUseJsonEncode) {
-
-            value = JSON.stringify(value);
-
+        if (Is.notNullOrUndefinedOrEmpty(item)) {
+          result = item;
         }
 
-        localStorage.setItem(this.buildKey({
-            currentName: object.CURRENT,
-            withUserId: object?.WITH_USER_ID ?? false,
-            withApplicationName: object?.WITH_APPLICATION_NAME ?? false,
-            ...(object?.DONT_CHECK_VERSION ? {} : {
-                version: this.version,
-            })
-        }), value);
+        localStorage.removeItem(prev);
+      });
 
+      // Check prev version app
+      const prevVersionAppList: string[] = this.prevVersionList ?? [];
+
+      if (Is.notNullOrUndefinedOrEmpty(prevVersionAppList)) {
+        prevVersionAppList.forEach((prevVersionApp: string) => {
+          const key: string = this.buildKey({
+            version: prevVersionApp,
+            withUserId,
+            withApplicationName,
+            currentName,
+          });
+
+          const item: any = localStorage.getItem(key);
+
+          if (Is.notNullOrUndefinedOrEmpty(item)) {
+            result = item;
+            localStorage.removeItem(key);
+          }
+        });
+      }
+
+      if (Is.notNullOrUndefinedOrEmpty(result)) {
+        this.set(
+          {
+            CURRENT: currentName,
+            PREVIOUS: [],
+            CHECKED: true,
+            DONT_CHECK_VERSION: dontCheckVersion,
+          },
+          result,
+          dontUseJsonDecode,
+        );
+      }
     }
 
-    /**
-     *
-     * @param object must be LocalStorageInterface type
-     * @param dontUseJsonDecode optional and type is boolean
-     */
-    @ArgumentsIsNotNullOrUndefined()
-    public static get(
-        object: LocalStorageInterface,
-        dontUseJsonDecode: boolean = false
-    ): any {
+    return result;
+  }
 
-        // let value: any;
-        let value: any = this.checkPrevious(object, dontUseJsonDecode);
+  /**
+   *
+   * @param version must be string
+   * @param currentName must be string
+   * @param withoutUserId optional and type is boolean
+   * @param withApplicationName optional and type is boolean
+   */
+  @ArgumentsIsNotNullOrUndefined()
+  public static buildKey({
+    version,
+    currentName,
+    withUserId = false,
+    withApplicationName = true,
+  }: {
+    currentName: string;
+    version?: string;
+    withUserId?: boolean;
+    withApplicationName?: boolean;
+  }): string {
+    let key: string = currentName;
 
-        if (Is.notNullOrUndefined(value)) {
-            return value;
-        }
-
-        value = localStorage.getItem(this.buildKey({
-            currentName: object.CURRENT,
-            withUserId: object?.WITH_USER_ID ?? false,
-            withApplicationName: object?.WITH_APPLICATION_NAME ?? true,
-            ...(object?.DONT_CHECK_VERSION ? {} : {
-                version: this.version,
-            })
-        }));
-
-        if (dontUseJsonDecode) {
-
-            return value;
-
-        } else {
-
-            try {
-
-                return JSON.parse(value);
-
-            } catch (e) {
-
-                return null;
-
-            }
-
-        }
-
+    if (Is.notNullOrUndefined(version)) {
+      key = `[${version}]${key}`;
     }
 
-    /**
-     *
-     * @param currentName must be string type
-     * @param previous must be array of string type
-     * @param withApplicationName optional and type is boolean
-     * @param withUserId optional and type is boolean
-     * @param dontCheckVersion optional and type is boolean
-     * @param dontUseJsonDecode optional and type is boolean
-     * @private
-     */
-    @ArgumentsIsNotNullOrUndefined()
-    private static mergePrevious({
-        currentName,
-        previous,
-        withApplicationName = true,
-        withUserId = false,
-        dontCheckVersion = false,
-        dontUseJsonDecode = false
-    }: {
-        currentName: string,
-        previous: string[],
-        withApplicationName?: boolean,
-        withUserId?: boolean,
-        dontCheckVersion?: boolean,
-        dontUseJsonDecode?: boolean
-    }): any {
-
-        let result: any = null;
-
-        if (previous?.length) {
-
-            // Check prev names
-            previous.forEach((prev) => {
-
-                const item = localStorage.getItem(prev);
-
-                if (Is.notNullOrUndefinedOrEmpty(item)) {
-
-                    result = item;
-
-                }
-
-                localStorage.removeItem(prev);
-
-            });
-
-            // Check prev version app
-            const prevVersionAppList: string[] = this.prevVersionList ?? [];
-
-            if (Is.notNullOrUndefinedOrEmpty(prevVersionAppList)) {
-
-                prevVersionAppList.forEach((prevVersionApp: string) => {
-
-                    const key: string = this.buildKey({
-                        version: prevVersionApp,
-                        withUserId,
-                        withApplicationName,
-                        currentName
-                    });
-
-                    const item: any = localStorage.getItem(key);
-
-                    if (Is.notNullOrUndefinedOrEmpty(item)) {
-
-                        result = item;
-                        localStorage.removeItem(key);
-
-                    }
-
-                });
-
-            }
-
-            if (Is.notNullOrUndefinedOrEmpty(result)) {
-
-                this.set({
-                    CURRENT: currentName,
-                    PREVIOUS: [],
-                    CHECKED: true,
-                    DONT_CHECK_VERSION: dontCheckVersion
-                }, result, dontUseJsonDecode);
-
-            }
-
-        }
-
-        return result;
-
+    if (withApplicationName) {
+      key += `{${this.applicationName}}`;
     }
 
-    /**
-     *
-     * @param version must be string
-     * @param currentName must be string
-     * @param withoutUserId optional and type is boolean
-     * @param withApplicationName optional and type is boolean
-     */
-    @ArgumentsIsNotNullOrUndefined()
-    public static buildKey({
-       version,
-       currentName,
-       withUserId = false,
-       withApplicationName = true,
-    }: {
-        currentName: string;
-        version?: string;
-        withUserId?: boolean;
-        withApplicationName?: boolean;
-    }): string {
-
-        let key: string = currentName;
-
-        if (Is.notNullOrUndefined(version)) {
-
-            key = `[${version}]${key}`;
-
-        }
-
-        if (withApplicationName) {
-            key += `{${this.applicationName}}`;
-        }
-
-        if (withUserId) {
-
-            key += `-${this.userId}`;
-
-        }
-
-        // TODO global configuration
-
-        return key;
+    if (withUserId) {
+      key += `-${this.userId}`;
     }
 
-    /**
-     *
-     * @param object must by type LocalStorageInterface
-     * @param dontUseJsonDecode must by type boolean
-     * @private
-     */
-    @ArgumentsIsNotNullOrUndefined()
-    private static checkPrevious(
-        object: LocalStorageInterface,
-        dontUseJsonDecode: boolean = false
-    ): null | any {
+    // TODO global configuration
 
-        let result: any = null;
+    return key;
+  }
 
-        if (object?.CHECKED === false) { // Don`t refactoring, it`s special check
+  /**
+   *
+   * @param object must by type LocalStorageInterface
+   * @param dontUseJsonDecode must by type boolean
+   * @private
+   */
+  @ArgumentsIsNotNullOrUndefined()
+  private static checkPrevious(object: LocalStorageInterface, dontUseJsonDecode: boolean = false): null | any {
+    let result: any = null;
 
-            result = this.mergePrevious({
-                currentName: object.CURRENT,
-                previous: object.PREVIOUS,
-                withApplicationName: object?.WITH_APPLICATION_NAME ?? false,
-                withUserId: object?.WITH_USER_ID ?? false,
-                dontCheckVersion: object?.DONT_CHECK_VERSION ?? false,
-                dontUseJsonDecode,
-            });
+    if (object?.CHECKED === false) {
+      // Don`t refactoring, it`s special check
 
-            object.CHECKED = true;
+      result = this.mergePrevious({
+        currentName: object.CURRENT,
+        previous: object.PREVIOUS,
+        withApplicationName: object?.WITH_APPLICATION_NAME ?? false,
+        withUserId: object?.WITH_USER_ID ?? false,
+        dontCheckVersion: object?.DONT_CHECK_VERSION ?? false,
+        dontUseJsonDecode,
+      });
 
-        }
-
-        return result;
-
+      object.CHECKED = true;
     }
+
+    return result;
+  }
 }
