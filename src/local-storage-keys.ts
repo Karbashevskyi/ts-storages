@@ -7,7 +7,7 @@
  * }
  */
 import { LocalStorageInterface } from './interfaces/local-storage.interface';
-import {ArgumentsIsNotNullOrUndefined} from 'package-ts-decorators-asserts';
+import { ArgumentsIsNotNullOrUndefined } from 'package-ts-decorators-asserts';
 
 export type StructureType = { [key: string]: { [key: string]: LocalStorageInterface } };
 
@@ -32,7 +32,7 @@ export const defaultState = {
       PREVIOUS: [],
       CHECKED: false,
       DONT_CHECK_VERSION: true,
-    }
+    },
   },
   USER: {
     ID: {
@@ -40,7 +40,7 @@ export const defaultState = {
       PREVIOUS: [],
       CHECKED: false,
       DONT_CHECK_VERSION: true,
-    }
+    },
   },
 };
 

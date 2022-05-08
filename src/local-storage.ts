@@ -47,11 +47,7 @@ export class LocalStorage {
    * @param dontUseJsonEncode optional argument and type is boolean
    */
   @ArgumentsIsNotNullOrUndefined()
-  public static set(
-      object: LocalStorageInterface,
-      value: any,
-      dontUseJsonEncode: boolean = false
-  ): void {
+  public static set(object: LocalStorageInterface, value: any, dontUseJsonEncode: boolean = false): void {
     if (!dontUseJsonEncode) {
       value = JSON.stringify(value);
     }
@@ -61,16 +57,13 @@ export class LocalStorage {
       withUserId: object?.WITH_USER_ID ?? false,
       withApplicationName: object?.WITH_APPLICATION_NAME ?? true,
       ...(object?.DONT_CHECK_VERSION
-          ? {}
-          : {
+        ? {}
+        : {
             version: this.version,
           }),
     });
 
-    localStorage.setItem(
-      key,
-      value,
-    );
+    localStorage.setItem(key, value);
   }
 
   /**
