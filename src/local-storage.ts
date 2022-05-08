@@ -51,9 +51,9 @@ export class LocalStorage {
 
     /**
      *
-     * @param object
-     * @param value
-     * @param dontUseJsonEncode
+     * @param object must be LocalStorageInterface type
+     * @param value any type
+     * @param dontUseJsonEncode optional argument and type is boolean
      */
     @ArgumentsIsNotNullOrUndefined()
     public static set(
@@ -81,8 +81,8 @@ export class LocalStorage {
 
     /**
      *
-     * @param object
-     * @param dontUseJsonDecode
+     * @param object must be LocalStorageInterface type
+     * @param dontUseJsonDecode optional and type is boolean
      */
     @ArgumentsIsNotNullOrUndefined()
     public static get(
@@ -128,12 +128,12 @@ export class LocalStorage {
 
     /**
      *
-     * @param currentName
-     * @param previous
-     * @param withApplicationName
-     * @param withUserId
-     * @param dontCheckVersion
-     * @param dontUseJsonDecode
+     * @param currentName must be string type
+     * @param previous must be array of string type
+     * @param withApplicationName optional and type is boolean
+     * @param withUserId optional and type is boolean
+     * @param dontCheckVersion optional and type is boolean
+     * @param dontUseJsonDecode optional and type is boolean
      * @private
      */
     @ArgumentsIsNotNullOrUndefined()
@@ -173,7 +173,7 @@ export class LocalStorage {
             });
 
             // Check prev version app
-            let prevVersionAppList: string[] = this.prevVersionList ?? [];
+            const prevVersionAppList: string[] = this.prevVersionList ?? [];
 
             if (Is.notNullOrUndefinedOrEmpty(prevVersionAppList)) {
 
@@ -218,9 +218,10 @@ export class LocalStorage {
 
     /**
      *
-     * @param version
-     * @param currentName
-     * @param withoutUserId
+     * @param version must be string
+     * @param currentName must be string
+     * @param withoutUserId optional and type is boolean
+     * @param withApplicationName optional and type is boolean
      */
     @ArgumentsIsNotNullOrUndefined()
     public static buildKey({
