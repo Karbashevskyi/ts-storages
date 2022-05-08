@@ -181,8 +181,8 @@ export class LocalStorage {
 
                     const key: string = this.buildKey({
                         version: prevVersionApp,
-                        withUserId: withUserId,
-                        withApplicationName: withApplicationName,
+                        withUserId,
+                        withApplicationName,
                         currentName
                     });
 
@@ -281,7 +281,7 @@ export class LocalStorage {
                 withApplicationName: object?.WITH_APPLICATION_NAME ?? false,
                 withUserId: object?.WITH_USER_ID ?? false,
                 dontCheckVersion: object?.DONT_CHECK_VERSION ?? false,
-                dontUseJsonDecode: dontUseJsonDecode,
+                dontUseJsonDecode,
             });
 
             object.CHECKED = true;
