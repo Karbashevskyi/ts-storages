@@ -32,7 +32,7 @@ export class LocalStorage {
 
     /**
      *
-     * @param object
+     * @param object must be LocalStorageInterface
      */
     @ArgumentsIsNotNullOrUndefined()
     public static remove(
