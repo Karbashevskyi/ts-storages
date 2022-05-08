@@ -6,19 +6,19 @@ import { ArgumentsIsNotNullOrUndefined } from 'package-ts-decorators-asserts';
 export class LocalStorage {
   // TODO add global configuration of user id and application name and other!
   public static get applicationName(): string {
-    return this.get(defaultState.MAIN.APPLICATION_NAME);
+    return this.get(defaultState.APPLICATION.NAME);
   }
 
   public static get version(): string {
-    return this.get(defaultState.MAIN.VERSION_APP);
+    return this.get(defaultState.APPLICATION.VERSION);
   }
 
   public static get userId(): string {
-    return this.get(defaultState.MAIN.USER_ID);
+    return this.get(defaultState.USER.ID);
   }
 
   public static get prevVersionList(): string[] {
-    return this.get(defaultState.MAIN.PREV_VERSION_APP);
+    return this.get(defaultState.APPLICATION.PREV_VERSION);
   }
 
   /**
@@ -47,22 +47,28 @@ export class LocalStorage {
    * @param dontUseJsonEncode optional argument and type is boolean
    */
   @ArgumentsIsNotNullOrUndefined()
-  public static set(object: LocalStorageInterface, value: any, dontUseJsonEncode: boolean = false): void {
+  public static set(
+      object: LocalStorageInterface,
+      value: any,
+      dontUseJsonEncode: boolean = false
+  ): void {
     if (!dontUseJsonEncode) {
       value = JSON.stringify(value);
     }
 
-    localStorage.setItem(
-      this.buildKey({
-        currentName: object.CURRENT,
-        withUserId: object?.WITH_USER_ID ?? false,
-        withApplicationName: object?.WITH_APPLICATION_NAME ?? false,
-        ...(object?.DONT_CHECK_VERSION
+    const key: string = this.buildKey({
+      currentName: object.CURRENT,
+      withUserId: object?.WITH_USER_ID ?? false,
+      withApplicationName: object?.WITH_APPLICATION_NAME ?? true,
+      ...(object?.DONT_CHECK_VERSION
           ? {}
           : {
-              version: this.version,
-            }),
-      }),
+            version: this.version,
+          }),
+    });
+
+    localStorage.setItem(
+      key,
       value,
     );
   }
@@ -237,7 +243,7 @@ export class LocalStorage {
       result = this.mergePrevious({
         currentName: object.CURRENT,
         previous: object.PREVIOUS,
-        withApplicationName: object?.WITH_APPLICATION_NAME ?? false,
+        withApplicationName: object?.WITH_APPLICATION_NAME ?? true,
         withUserId: object?.WITH_USER_ID ?? false,
         dontCheckVersion: object?.DONT_CHECK_VERSION ?? false,
         dontUseJsonDecode,

@@ -1,7 +1,11 @@
 import {LocalStorage} from '../lib';
 import {defaultState} from '../src/local-storage-keys';
+import {LocalStorageKey} from '../lib/local-storage-keys';
 
 describe('Test LocalStorage', () => {
+
+    const applicationName: string = 'ts-storages';
+    const version: string = '1.0.0';
 
     beforeAll(() => {
         const localStorageMock = (function() {
@@ -25,22 +29,46 @@ describe('Test LocalStorage', () => {
         Object.defineProperty(window, 'localStorage', { value: localStorageMock });
         Object.assign(localStorage, localStorageMock);
 
+        LocalStorage.set(defaultState.APPLICATION.NAME, applicationName);
+        LocalStorage.set(defaultState.APPLICATION.VERSION, version);
+
     });
 
     it('Should localStorage empty', () => {
         expect(localStorage.length).toBe(0);
     });
 
-    it('Should localStorage has a applicationName', () => {
-        const applicationName = 'ts-storages';
-        LocalStorage.set(defaultState.MAIN.APPLICATION_NAME, applicationName);
+    it('Should localStorage has an applicationName', () => {
         expect(LocalStorage.applicationName).toBe(applicationName);
     });
 
-    // TODO make tests
+    it('Should localStorage has an applicationName', () => {
+        expect(LocalStorage.version).toBe(version);
+    });
 
-    it('Add new tests', () => {
-        expect(true).toBeTruthy();
+    it('Should add new items to LocalStorageKey', () => {
+        LocalStorageKey.merge({
+            TABLES: {
+                EXAMPLE: {
+                    CURRENT: `2.0`,
+                    PREVIOUS: [],
+                    CHECKED: true
+                }
+            }
+        });
+        expect(LocalStorageKey.state['TABLES']['EXAMPLE'].CURRENT).toBe('2.0');
+    });
+
+    it('Should add new items to localStorage', () => {
+        LocalStorage.set(
+            LocalStorageKey.state['TABLES']['EXAMPLE'],
+            {
+                propertyOne: 'valueOfPropertyOne',
+                propertyTwo: 'valueOfPropertyTwo'
+            }
+        );
+        const value: any = LocalStorage.get(LocalStorageKey.state['TABLES']['EXAMPLE']);
+        expect(Object.keys(value).length).toBe(2);
     });
 
 });

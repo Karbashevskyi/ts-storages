@@ -13,30 +13,32 @@ export declare type StructureType = {
     };
 };
 export declare const defaultState: {
-    MAIN: {
-        VERSION_APP: {
-            CURRENT: string;
-            PREVIOUS: never[];
-            CHECKED: boolean;
-            DONT_CHECK_VERSION: boolean;
-        };
-        PREV_VERSION_APP: {
-            CURRENT: string;
-            PREVIOUS: never[];
-            CHECKED: boolean;
-            DONT_CHECK_VERSION: boolean;
-        };
-        USER_ID: {
-            CURRENT: string;
-            PREVIOUS: never[];
-            CHECKED: boolean;
-            DONT_CHECK_VERSION: boolean;
-        };
-        APPLICATION_NAME: {
+    APPLICATION: {
+        NAME: {
             CURRENT: string;
             PREVIOUS: never[];
             CHECKED: boolean;
             WITH_APPLICATION_NAME: boolean;
+            DONT_CHECK_VERSION: boolean;
+        };
+        VERSION: {
+            CURRENT: string;
+            PREVIOUS: never[];
+            CHECKED: boolean;
+            DONT_CHECK_VERSION: boolean;
+        };
+        PREV_VERSION: {
+            CURRENT: string;
+            PREVIOUS: never[];
+            CHECKED: boolean;
+            DONT_CHECK_VERSION: boolean;
+        };
+    };
+    USER: {
+        ID: {
+            CURRENT: string;
+            PREVIOUS: never[];
+            CHECKED: boolean;
             DONT_CHECK_VERSION: boolean;
         };
     };
@@ -56,5 +58,10 @@ export declare class LocalStorageKey {
      * @param key must be string
      */
     static remove(category: string, key: string): void;
+    /**
+     *
+     * @param state
+     */
+    static merge(state: StructureType): void;
     static get state(): StructureType;
 }
