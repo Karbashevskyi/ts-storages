@@ -2,11 +2,25 @@ import { LocalStorageInterface } from './interfaces/local-storage.interface';
 import { Is } from 'ts-checkers';
 import { defaultState } from './local-storage-keys';
 import { ArgumentsIsNotNullOrUndefined } from 'package-ts-decorators-asserts';
+import {Asserts} from 'ts-asserts';
 
 export class LocalStorage {
+
+  static #applicationName: string;
+
   // TODO add global configuration of user id and application name and other!
+  // TODO applicationName is local, dont save to localStorage
+  /**
+   *
+   * @param name
+   */
+  public static set applicationName(name: string) {
+    this.#applicationName = name;
+  }
+
   public static get applicationName(): string {
-    return this.get(defaultState.APPLICATION.NAME);
+    Asserts.assertString(this.#applicationName);
+    return this.#applicationName;
   }
 
   public static get version(): string {
@@ -30,7 +44,7 @@ export class LocalStorage {
     localStorage.removeItem(
       this.buildKey({
         currentName: object.CURRENT,
-        withUserId: object?.WITH_USER_ID ?? false,
+        withUserId: object?.WITH_USER_ID,
         ...(object?.DONT_CHECK_VERSION
           ? {}
           : {
@@ -54,8 +68,8 @@ export class LocalStorage {
 
     const key: string = this.buildKey({
       currentName: object.CURRENT,
-      withUserId: object?.WITH_USER_ID ?? false,
-      withApplicationName: object?.WITH_APPLICATION_NAME ?? true,
+      withUserId: object?.WITH_USER_ID,
+      withApplicationName: object?.WITH_APPLICATION_NAME,
       ...(object?.DONT_CHECK_VERSION
         ? {}
         : {
@@ -83,8 +97,8 @@ export class LocalStorage {
     value = localStorage.getItem(
       this.buildKey({
         currentName: object.CURRENT,
-        withUserId: object?.WITH_USER_ID ?? false,
-        withApplicationName: object?.WITH_APPLICATION_NAME ?? true,
+        withUserId: object?.WITH_USER_ID,
+        withApplicationName: object?.WITH_APPLICATION_NAME,
         ...(object?.DONT_CHECK_VERSION
           ? {}
           : {
@@ -227,7 +241,10 @@ export class LocalStorage {
    * @private
    */
   @ArgumentsIsNotNullOrUndefined()
-  private static checkPrevious(object: LocalStorageInterface, dontUseJsonDecode: boolean = false): null | any {
+  private static checkPrevious(
+      object: LocalStorageInterface,
+      dontUseJsonDecode: boolean = false
+  ): null | any {
     let result: any = null;
 
     if (object?.CHECKED === false) {
@@ -236,9 +253,9 @@ export class LocalStorage {
       result = this.mergePrevious({
         currentName: object.CURRENT,
         previous: object.PREVIOUS,
-        withApplicationName: object?.WITH_APPLICATION_NAME ?? true,
-        withUserId: object?.WITH_USER_ID ?? false,
-        dontCheckVersion: object?.DONT_CHECK_VERSION ?? false,
+        withApplicationName: object?.WITH_APPLICATION_NAME,
+        withUserId: object?.WITH_USER_ID,
+        dontCheckVersion: object?.DONT_CHECK_VERSION,
         dontUseJsonDecode,
       });
 

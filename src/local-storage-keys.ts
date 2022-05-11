@@ -14,21 +14,14 @@ export type StructureType = { [key: string]: { [key: string]: LocalStorageInterf
 // TODO make const with generic and the generic extend from default StructureType.
 export const defaultState = {
   APPLICATION: {
-    NAME: {
-      CURRENT: `0.0`,
-      PREVIOUS: [],
-      CHECKED: false,
-      WITH_APPLICATION_NAME: false,
-      DONT_CHECK_VERSION: true,
-    },
     VERSION: {
-      CURRENT: `0.1`,
+      CURRENT: `A.0`, // A - Application
       PREVIOUS: [],
       CHECKED: false,
       DONT_CHECK_VERSION: true,
     },
     PREV_VERSION: {
-      CURRENT: `0.2`,
+      CURRENT: `A.1`, // A - Application
       PREVIOUS: [],
       CHECKED: false,
       DONT_CHECK_VERSION: true,
@@ -36,7 +29,7 @@ export const defaultState = {
   },
   USER: {
     ID: {
-      CURRENT: `1.0`,
+      CURRENT: `U.0`, // U - User
       PREVIOUS: [],
       CHECKED: false,
       DONT_CHECK_VERSION: true,
@@ -45,7 +38,7 @@ export const defaultState = {
 };
 
 export class LocalStorageKey {
-  static readonly #state: StructureType = defaultState;
+  static #state: StructureType = defaultState;
 
   /**
    *
@@ -54,7 +47,7 @@ export class LocalStorageKey {
    * @param value must be LocalStorageInterface
    */
   @ArgumentsIsNotNullOrUndefined()
-  public static set(category: string, key: string, value: LocalStorageInterface): void {
+  public static setItem(category: string, key: string, value: LocalStorageInterface): void {
     this.#state[category][key] = value;
   }
 
@@ -64,20 +57,30 @@ export class LocalStorageKey {
    * @param key must be string
    */
   @ArgumentsIsNotNullOrUndefined()
-  public static remove(category: string, key: string): void {
+  public static removeItem(category: string, key: string): void {
     delete this.#state[category][key];
   }
 
   /**
    *
-   * @param state
+   * @param state must be StructureType
    */
   @ArgumentsIsNotNullOrUndefined()
-  public static merge(state: StructureType): void {
+  public static setState(state: StructureType): void {
+    this.#state = state;
+  }
+
+  /**
+   *
+   * @param state must be StructureType
+   */
+  @ArgumentsIsNotNullOrUndefined()
+  public static mergeState(state: StructureType): void {
     Object.assign(this.#state, state);
   }
 
   public static get state(): StructureType {
     return this.#state;
   }
+
 }
