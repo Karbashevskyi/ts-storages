@@ -82,5 +82,4 @@ export class LocalStorageKey {
   public static get state(): StructureType {
     return this.#state;
   }
-
 }

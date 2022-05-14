@@ -2,10 +2,9 @@ import { LocalStorageInterface } from './interfaces/local-storage.interface';
 import { Is } from 'ts-checkers';
 import { defaultState } from './local-storage-keys';
 import { ArgumentsIsNotNullOrUndefined } from 'package-ts-decorators-asserts';
-import {Asserts} from 'ts-asserts';
+import { Asserts } from 'ts-asserts';
 
 export class LocalStorage {
-
   static #applicationName: string;
 
   // TODO add global configuration of user id and application name and other!
@@ -42,9 +41,7 @@ export class LocalStorage {
    */
   @ArgumentsIsNotNullOrUndefined()
   public static remove(object: LocalStorageInterface): void {
-    localStorage.removeItem(
-      this.buildKey(object),
-    );
+    localStorage.removeItem(this.buildKey(object));
   }
 
   /**
@@ -54,11 +51,7 @@ export class LocalStorage {
    * @param dontUseJsonEncode optional argument and type is boolean
    */
   @ArgumentsIsNotNullOrUndefined()
-  public static set(
-      object: LocalStorageInterface,
-      value: any,
-      dontUseJsonEncode: boolean = false
-  ): void {
+  public static set(object: LocalStorageInterface, value: any, dontUseJsonEncode: boolean = false): void {
     if (!dontUseJsonEncode) {
       value = JSON.stringify(value);
     }
@@ -81,10 +74,7 @@ export class LocalStorage {
    * @param dontUseJsonDecode optional and type is boolean
    */
   @ArgumentsIsNotNullOrUndefined()
-  public static get(
-      object: LocalStorageInterface,
-      dontUseJsonDecode: boolean = false
-  ): any {
+  public static get(object: LocalStorageInterface, dontUseJsonDecode: boolean = false): any {
     // let value: any;
     let value: any = this.checkPrevious(object, dontUseJsonDecode);
 
@@ -121,10 +111,7 @@ export class LocalStorage {
    * @private
    */
   @ArgumentsIsNotNullOrUndefined()
-  private static mergePrevious(
-      object: LocalStorageInterface,
-      dontUseJsonDecode: boolean = false
-  ): any {
+  private static mergePrevious(object: LocalStorageInterface, dontUseJsonDecode: boolean = false): any {
     let result: any = null;
 
     if (object?.previous?.length) {
@@ -203,10 +190,7 @@ export class LocalStorage {
    * @private
    */
   @ArgumentsIsNotNullOrUndefined()
-  private static checkPrevious(
-      object: LocalStorageInterface,
-      dontUseJsonDecode: boolean = false
-  ): null | any {
+  private static checkPrevious(object: LocalStorageInterface, dontUseJsonDecode: boolean = false): null | any {
     let result: any = null;
 
     if (Is.false(object?.checked ?? true)) {
