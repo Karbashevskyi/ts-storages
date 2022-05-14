@@ -15,24 +15,24 @@ export type StructureType = { [key: string]: { [key: string]: LocalStorageInterf
 export const defaultState = {
   APPLICATION: {
     VERSION: {
-      CURRENT: `A.0`, // A - Application
-      PREVIOUS: [],
-      CHECKED: false,
-      DONT_CHECK_VERSION: true,
+      current: `A.0`, // A - Application
+      previous: [],
+      checked: false,
+      dontCheckVersion: true,
     },
     PREV_VERSION: {
-      CURRENT: `A.1`, // A - Application
-      PREVIOUS: [],
-      CHECKED: false,
-      DONT_CHECK_VERSION: true,
+      current: `A.1`, // A - Application
+      previous: [],
+      checked: false,
+      dont_check_version: true,
     },
   },
   USER: {
     ID: {
-      CURRENT: `U.0`, // U - User
-      PREVIOUS: [],
-      CHECKED: false,
-      DONT_CHECK_VERSION: true,
+      current: `U.0`, // U - User
+      previous: [],
+      checked: false,
+      dont_check_version: true,
     },
   },
 };

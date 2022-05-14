@@ -14,7 +14,8 @@ export class LocalStorage {
    *
    * @param name
    */
-  public static set applicationName(name: string) {
+  @ArgumentsIsNotNullOrUndefined()
+  public static setApplicationName(name: string) {
     this.#applicationName = name;
   }
 
@@ -42,15 +43,7 @@ export class LocalStorage {
   @ArgumentsIsNotNullOrUndefined()
   public static remove(object: LocalStorageInterface): void {
     localStorage.removeItem(
-      this.buildKey({
-        currentName: object.CURRENT,
-        withUserId: object?.WITH_USER_ID,
-        ...(object?.DONT_CHECK_VERSION
-          ? {}
-          : {
-              version: this.version,
-            }),
-      }),
+      this.buildKey(object),
     );
   }
 
@@ -61,16 +54,18 @@ export class LocalStorage {
    * @param dontUseJsonEncode optional argument and type is boolean
    */
   @ArgumentsIsNotNullOrUndefined()
-  public static set(object: LocalStorageInterface, value: any, dontUseJsonEncode: boolean = false): void {
+  public static set(
+      object: LocalStorageInterface,
+      value: any,
+      dontUseJsonEncode: boolean = false
+  ): void {
     if (!dontUseJsonEncode) {
       value = JSON.stringify(value);
     }
 
     const key: string = this.buildKey({
-      currentName: object.CURRENT,
-      withUserId: object?.WITH_USER_ID,
-      withApplicationName: object?.WITH_APPLICATION_NAME,
-      ...(object?.DONT_CHECK_VERSION
+      ...object,
+      ...(object?.dontCheckVersion
         ? {}
         : {
             version: this.version,
@@ -86,7 +81,10 @@ export class LocalStorage {
    * @param dontUseJsonDecode optional and type is boolean
    */
   @ArgumentsIsNotNullOrUndefined()
-  public static get(object: LocalStorageInterface, dontUseJsonDecode: boolean = false): any {
+  public static get(
+      object: LocalStorageInterface,
+      dontUseJsonDecode: boolean = false
+  ): any {
     // let value: any;
     let value: any = this.checkPrevious(object, dontUseJsonDecode);
 
@@ -96,10 +94,8 @@ export class LocalStorage {
 
     value = localStorage.getItem(
       this.buildKey({
-        currentName: object.CURRENT,
-        withUserId: object?.WITH_USER_ID,
-        withApplicationName: object?.WITH_APPLICATION_NAME,
-        ...(object?.DONT_CHECK_VERSION
+        ...object,
+        ...(object?.dontCheckVersion
           ? {}
           : {
               version: this.version,
@@ -120,35 +116,20 @@ export class LocalStorage {
 
   /**
    *
-   * @param currentName must be string type
-   * @param previous must be array of string type
-   * @param withApplicationName optional and type is boolean
-   * @param withUserId optional and type is boolean
-   * @param dontCheckVersion optional and type is boolean
+   * @param object
    * @param dontUseJsonDecode optional and type is boolean
    * @private
    */
   @ArgumentsIsNotNullOrUndefined()
-  private static mergePrevious({
-    currentName,
-    previous,
-    withApplicationName = true,
-    withUserId = false,
-    dontCheckVersion = false,
-    dontUseJsonDecode = false,
-  }: {
-    currentName: string;
-    previous: string[];
-    withApplicationName?: boolean;
-    withUserId?: boolean;
-    dontCheckVersion?: boolean;
-    dontUseJsonDecode?: boolean;
-  }): any {
+  private static mergePrevious(
+      object: LocalStorageInterface,
+      dontUseJsonDecode: boolean = false
+  ): any {
     let result: any = null;
 
-    if (previous?.length) {
+    if (object?.previous?.length) {
       // Check prev names
-      previous.forEach((prev) => {
+      object?.previous.forEach((prev) => {
         const item = localStorage.getItem(prev);
 
         if (Is.notNullOrUndefinedOrEmpty(item)) {
@@ -163,12 +144,7 @@ export class LocalStorage {
 
       if (Is.notNullOrUndefinedOrEmpty(prevVersionAppList)) {
         prevVersionAppList.forEach((prevVersionApp: string) => {
-          const key: string = this.buildKey({
-            version: prevVersionApp,
-            withUserId,
-            withApplicationName,
-            currentName,
-          });
+          const key: string = this.buildKey(object, prevVersionApp);
 
           const item: any = localStorage.getItem(key);
 
@@ -182,10 +158,10 @@ export class LocalStorage {
       if (Is.notNullOrUndefinedOrEmpty(result)) {
         this.set(
           {
-            CURRENT: currentName,
-            PREVIOUS: [],
-            CHECKED: true,
-            DONT_CHECK_VERSION: dontCheckVersion,
+            current: object?.current,
+            previous: [],
+            checked: true,
+            dontCheckVersion: object.dontCheckVersion,
           },
           result,
           dontUseJsonDecode,
@@ -198,38 +174,24 @@ export class LocalStorage {
 
   /**
    *
-   * @param version must be string
-   * @param currentName must be string
-   * @param withoutUserId optional and type is boolean
-   * @param withApplicationName optional and type is boolean
+   * @param object
+   * @param prevVersion
    */
   @ArgumentsIsNotNullOrUndefined()
-  public static buildKey({
-    version,
-    currentName,
-    withUserId = false,
-    withApplicationName = true,
-  }: {
-    currentName: string;
-    version?: string;
-    withUserId?: boolean;
-    withApplicationName?: boolean;
-  }): string {
-    let key: string = currentName;
+  public static buildKey(object: LocalStorageInterface, prevVersion?: string): string {
+    let key: string = object?.current ?? '';
 
-    if (Is.notNullOrUndefined(version)) {
-      key = `[${version}]${key}`;
+    if (!object?.dontCheckVersion) {
+      key = `[${prevVersion ?? this.version}]${key}`;
     }
 
-    if (withApplicationName) {
+    if (object?.withApplicationName) {
       key += `{${this.applicationName}}`;
     }
 
-    if (withUserId) {
+    if (object?.withUserId) {
       key += `-${this.userId}`;
     }
-
-    // TODO global configuration
 
     return key;
   }
@@ -247,19 +209,12 @@ export class LocalStorage {
   ): null | any {
     let result: any = null;
 
-    if (object?.CHECKED === false) {
+    if (Is.false(object?.checked ?? true)) {
       // Don`t refactoring, it`s special check
 
-      result = this.mergePrevious({
-        currentName: object.CURRENT,
-        previous: object.PREVIOUS,
-        withApplicationName: object?.WITH_APPLICATION_NAME,
-        withUserId: object?.WITH_USER_ID,
-        dontCheckVersion: object?.DONT_CHECK_VERSION,
-        dontUseJsonDecode,
-      });
+      result = this.mergePrevious(object, dontUseJsonDecode);
 
-      object.CHECKED = true;
+      object.checked = true;
     }
 
     return result;

@@ -1,5 +1,11 @@
 import { LocalStorageInterface } from './interfaces/local-storage.interface';
 export declare class LocalStorage {
+    #private;
+    /**
+     *
+     * @param name
+     */
+    static setApplicationName(name: string): void;
     static get applicationName(): string;
     static get version(): string;
     static get userId(): string;
@@ -24,28 +30,17 @@ export declare class LocalStorage {
     static get(object: LocalStorageInterface, dontUseJsonDecode?: boolean): any;
     /**
      *
-     * @param currentName must be string type
-     * @param previous must be array of string type
-     * @param withApplicationName optional and type is boolean
-     * @param withUserId optional and type is boolean
-     * @param dontCheckVersion optional and type is boolean
+     * @param object
      * @param dontUseJsonDecode optional and type is boolean
      * @private
      */
     private static mergePrevious;
     /**
      *
-     * @param version must be string
-     * @param currentName must be string
-     * @param withoutUserId optional and type is boolean
-     * @param withApplicationName optional and type is boolean
+     * @param object
+     * @param prevVersion
      */
-    static buildKey({ version, currentName, withUserId, withApplicationName, }: {
-        currentName: string;
-        version?: string;
-        withUserId?: boolean;
-        withApplicationName?: boolean;
-    }): string;
+    static buildKey(object: LocalStorageInterface, prevVersion?: string): string;
     /**
      *
      * @param object must by type LocalStorageInterface

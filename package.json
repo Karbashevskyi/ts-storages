@@ -48,6 +48,6 @@
   "dependencies": {
     "package-ts-decorators-asserts": "^1.1.4",
     "ts-asserts": "^0.0.0",
-    "ts-checkers": "^0.0.4"
+    "ts-checkers": "^0.0.5"
   }
 }

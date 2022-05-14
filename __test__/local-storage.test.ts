@@ -29,7 +29,7 @@ describe('Test LocalStorage', () => {
         Object.defineProperty(window, 'localStorage', { value: localStorageMock });
         Object.assign(localStorage, localStorageMock);
 
-        LocalStorage.set(defaultState.APPLICATION.NAME, applicationName);
+        LocalStorage.setApplicationName(applicationName);
         LocalStorage.set(defaultState.APPLICATION.VERSION, version);
 
     });
@@ -47,16 +47,16 @@ describe('Test LocalStorage', () => {
     });
 
     it('Should add new items to LocalStorageKey', () => {
-        LocalStorageKey.merge({
+        LocalStorageKey.mergeState({
             TABLES: {
                 EXAMPLE: {
-                    CURRENT: `2.0`,
-                    PREVIOUS: [],
-                    CHECKED: true
+                    current: `T.0`,
+                    previous: [],
+                    checked: true
                 }
             }
         });
-        expect(LocalStorageKey.state['TABLES']['EXAMPLE'].CURRENT).toBe('2.0');
+        expect(LocalStorageKey.state['TABLES']['EXAMPLE'].current).toBe('T.0');
     });
 
     it('Should add new items to localStorage', () => {

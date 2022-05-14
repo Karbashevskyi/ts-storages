@@ -14,32 +14,25 @@ export declare type StructureType = {
 };
 export declare const defaultState: {
     APPLICATION: {
-        NAME: {
-            CURRENT: string;
-            PREVIOUS: never[];
-            CHECKED: boolean;
-            WITH_APPLICATION_NAME: boolean;
-            DONT_CHECK_VERSION: boolean;
-        };
         VERSION: {
-            CURRENT: string;
-            PREVIOUS: never[];
-            CHECKED: boolean;
-            DONT_CHECK_VERSION: boolean;
+            current: string;
+            previous: never[];
+            checked: boolean;
+            dontCheckVersion: boolean;
         };
         PREV_VERSION: {
-            CURRENT: string;
-            PREVIOUS: never[];
-            CHECKED: boolean;
-            DONT_CHECK_VERSION: boolean;
+            current: string;
+            previous: never[];
+            checked: boolean;
+            dont_check_version: boolean;
         };
     };
     USER: {
         ID: {
-            CURRENT: string;
-            PREVIOUS: never[];
-            CHECKED: boolean;
-            DONT_CHECK_VERSION: boolean;
+            current: string;
+            previous: never[];
+            checked: boolean;
+            dont_check_version: boolean;
         };
     };
 };
@@ -51,17 +44,22 @@ export declare class LocalStorageKey {
      * @param key must be string
      * @param value must be LocalStorageInterface
      */
-    static set(category: string, key: string, value: LocalStorageInterface): void;
+    static setItem(category: string, key: string, value: LocalStorageInterface): void;
     /**
      *
      * @param category must be string
      * @param key must be string
      */
-    static remove(category: string, key: string): void;
+    static removeItem(category: string, key: string): void;
     /**
      *
-     * @param state
+     * @param state must be StructureType
      */
-    static merge(state: StructureType): void;
+    static setState(state: StructureType): void;
+    /**
+     *
+     * @param state must be StructureType
+     */
+    static mergeState(state: StructureType): void;
     static get state(): StructureType;
 }
