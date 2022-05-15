@@ -53,18 +53,13 @@ export class LocalStorage {
   @ArgumentsIsNotNullOrUndefined()
   public static set(object: LocalStorageInterface, value: any, dontUseJsonEncode: boolean = false): void {
     if (!dontUseJsonEncode) {
-      value = JSON.stringify(value);
+      try {
+        value = JSON.stringify(value);
+      } catch (e) {
+        value = null;
+      }
     }
-
-    const key: string = this.buildKey({
-      ...object,
-      ...(object?.dontCheckVersion
-        ? {}
-        : {
-            version: this.version,
-          }),
-    });
-
+    const key: string = this.buildKey(object);
     localStorage.setItem(key, value);
   }
 
@@ -75,23 +70,13 @@ export class LocalStorage {
    */
   @ArgumentsIsNotNullOrUndefined()
   public static get(object: LocalStorageInterface, dontUseJsonDecode: boolean = false): any {
-    // let value: any;
     let value: any = this.checkPrevious(object, dontUseJsonDecode);
 
     if (Is.notNullOrUndefined(value)) {
       return value;
     }
 
-    value = localStorage.getItem(
-      this.buildKey({
-        ...object,
-        ...(object?.dontCheckVersion
-          ? {}
-          : {
-              version: this.version,
-            }),
-      }),
-    );
+    value = localStorage.getItem(this.buildKey(object));
 
     if (dontUseJsonDecode) {
       return value;
@@ -129,7 +114,7 @@ export class LocalStorage {
       // Check prev version app
       const prevVersionAppList: string[] = this.prevVersionList ?? [];
 
-      if (Is.notNullOrUndefinedOrEmpty(prevVersionAppList)) {
+      if (Array.isArray(prevVersionAppList)) {
         prevVersionAppList.forEach((prevVersionApp: string) => {
           const key: string = this.buildKey(object, prevVersionApp);
 
@@ -190,7 +175,8 @@ export class LocalStorage {
    * @private
    */
   @ArgumentsIsNotNullOrUndefined()
-  private static checkPrevious(object: LocalStorageInterface, dontUseJsonDecode: boolean = false): null | any {
+  private static checkPrevious(
+      object: LocalStorageInterface, dontUseJsonDecode: boolean = false): null | any {
     let result: any = null;
 
     if (Is.false(object?.checked ?? true)) {

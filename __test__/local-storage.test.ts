@@ -1,6 +1,5 @@
-import {LocalStorage} from '../lib';
+import {LocalStorage, LocalStorageKey} from '../lib';
 import {defaultState} from '../src/local-storage-keys';
-import {LocalStorageKey} from '../lib/local-storage-keys';
 
 describe('Test LocalStorage', () => {
 
