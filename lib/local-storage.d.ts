@@ -7,9 +7,18 @@ export declare class LocalStorage {
      */
     static setApplicationName(name: string): void;
     static get applicationName(): string;
-    static get version(): string;
+    static get applicationVersion(): string | null;
     static get userId(): string;
     static get prevVersionList(): string[];
+    static deleteUserData(): void;
+    static deleteApplicationData(): void;
+    /**
+     *
+     * @param section must be get from defaultState
+     */
+    static deleteSection(section: {
+        [key: string]: LocalStorageInterface;
+    }): void;
     /**
      *
      * @param object must be LocalStorageInterface
@@ -19,19 +28,16 @@ export declare class LocalStorage {
      *
      * @param object must be LocalStorageInterface type
      * @param value any type
-     * @param dontUseJsonEncode optional argument and type is boolean
      */
-    static set(object: LocalStorageInterface, value: any, dontUseJsonEncode?: boolean): void;
+    static set(object: LocalStorageInterface, value: any): void;
     /**
      *
      * @param object must be LocalStorageInterface type
-     * @param dontUseJsonDecode optional and type is boolean
      */
-    static get(object: LocalStorageInterface, dontUseJsonDecode?: boolean): any;
+    static get(object: LocalStorageInterface): any;
     /**
      *
      * @param object
-     * @param dontUseJsonDecode optional and type is boolean
      * @private
      */
     private static mergePrevious;
@@ -44,7 +50,6 @@ export declare class LocalStorage {
     /**
      *
      * @param object must by type LocalStorageInterface
-     * @param dontUseJsonDecode must by type boolean
      * @private
      */
     private static checkPrevious;

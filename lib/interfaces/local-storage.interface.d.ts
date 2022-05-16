@@ -5,4 +5,5 @@ export interface LocalStorageInterface {
     withApplicationName?: boolean;
     withUserId?: boolean;
     dontCheckVersion?: boolean;
+    json?: boolean;
 }
