@@ -6,6 +6,7 @@ import { Asserts } from 'ts-asserts';
 
 export class LocalStorage {
   static #applicationName: string;
+  static #applicationVersion: string | null;
 
   // TODO add global configuration of user id and application name and other!
   // TODO applicationName is local, dont save to localStorage
@@ -23,8 +24,11 @@ export class LocalStorage {
     return this.#applicationName;
   }
 
-  public static get version(): string {
-    return this.get(defaultState.APPLICATION.VERSION);
+  public static get applicationVersion(): string | null {
+    if (Is.nullOrUndefined(this.#applicationVersion)) {
+      this.#applicationVersion = this.get(defaultState.APPLICATION.VERSION);
+    }
+    return this.#applicationVersion;
   }
 
   public static get userId(): string {
@@ -33,6 +37,25 @@ export class LocalStorage {
 
   public static get prevVersionList(): string[] {
     return this.get(defaultState.APPLICATION.PREV_VERSION);
+  }
+
+  public static deleteUserData(): void {
+    this.deleteSection(defaultState.USER);
+  }
+
+  public static deleteApplicationData(): void {
+    this.deleteSection(defaultState.USER);
+  }
+
+  /**
+   *
+   * @param section must be get from defaultState
+   */
+  @ArgumentsIsNotNullOrUndefined()
+  public static deleteSection(section: {[key: string]: LocalStorageInterface}): void {
+    Object.values(section).forEach((item: LocalStorageInterface) => {
+      this.remove(item);
+    });
   }
 
   /**
@@ -48,11 +71,10 @@ export class LocalStorage {
    *
    * @param object must be LocalStorageInterface type
    * @param value any type
-   * @param dontUseJsonEncode optional argument and type is boolean
    */
   @ArgumentsIsNotNullOrUndefined()
-  public static set(object: LocalStorageInterface, value: any, dontUseJsonEncode: boolean = false): void {
-    if (!dontUseJsonEncode) {
+  public static set(object: LocalStorageInterface, value: any): void {
+    if (Is.true(object?.json ?? true)) {
       try {
         value = JSON.stringify(value);
       } catch (e) {
@@ -66,11 +88,10 @@ export class LocalStorage {
   /**
    *
    * @param object must be LocalStorageInterface type
-   * @param dontUseJsonDecode optional and type is boolean
    */
   @ArgumentsIsNotNullOrUndefined()
-  public static get(object: LocalStorageInterface, dontUseJsonDecode: boolean = false): any {
-    let value: any = this.checkPrevious(object, dontUseJsonDecode);
+  public static get(object: LocalStorageInterface): any {
+    let value: any = this.checkPrevious(object);
 
     if (Is.notNullOrUndefined(value)) {
       return value;
@@ -78,25 +99,24 @@ export class LocalStorage {
 
     value = localStorage.getItem(this.buildKey(object));
 
-    if (dontUseJsonDecode) {
-      return value;
-    } else {
+    if (Is.true(object?.json ?? true)) {
       try {
         return JSON.parse(value);
       } catch (e) {
         return null;
       }
+    } else {
+      return value;
     }
   }
 
   /**
    *
    * @param object
-   * @param dontUseJsonDecode optional and type is boolean
    * @private
    */
   @ArgumentsIsNotNullOrUndefined()
-  private static mergePrevious(object: LocalStorageInterface, dontUseJsonDecode: boolean = false): any {
+  private static mergePrevious(object: LocalStorageInterface): any {
     let result: any = null;
 
     if (object?.previous?.length) {
@@ -135,8 +155,7 @@ export class LocalStorage {
             checked: true,
             dontCheckVersion: object.dontCheckVersion,
           },
-          result,
-          dontUseJsonDecode,
+          result
         );
       }
     }
@@ -154,7 +173,7 @@ export class LocalStorage {
     let key: string = object?.current ?? '';
 
     if (!object?.dontCheckVersion) {
-      key = `[${prevVersion ?? this.version}]${key}`;
+      key = `[${prevVersion ?? this.applicationVersion}]${key}`;
     }
 
     if (object?.withApplicationName) {
@@ -171,18 +190,17 @@ export class LocalStorage {
   /**
    *
    * @param object must by type LocalStorageInterface
-   * @param dontUseJsonDecode must by type boolean
    * @private
    */
   @ArgumentsIsNotNullOrUndefined()
   private static checkPrevious(
-      object: LocalStorageInterface, dontUseJsonDecode: boolean = false): null | any {
+      object: LocalStorageInterface): null | any {
     let result: any = null;
 
     if (Is.false(object?.checked ?? true)) {
       // Don`t refactoring, it`s special check
 
-      result = this.mergePrevious(object, dontUseJsonDecode);
+      result = this.mergePrevious(object);
 
       object.checked = true;
     }
