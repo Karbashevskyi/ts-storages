@@ -42,7 +42,7 @@ describe('Test LocalStorage', () => {
     });
 
     it('Should localStorage has an applicationName', () => {
-        expect(LocalStorage.applicationName).toBe(version);
+        expect(LocalStorage.applicationVersion).toBe(version);
     });
 
     it('Should add new items to LocalStorageKey', () => {

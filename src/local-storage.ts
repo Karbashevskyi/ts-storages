@@ -52,7 +52,7 @@ export class LocalStorage {
    * @param section must be get from defaultState
    */
   @ArgumentsIsNotNullOrUndefined()
-  public static deleteSection(section: {[key: string]: LocalStorageInterface}): void {
+  public static deleteSection(section: { [key: string]: LocalStorageInterface }): void {
     Object.values(section).forEach((item: LocalStorageInterface) => {
       this.remove(item);
     });
@@ -155,7 +155,7 @@ export class LocalStorage {
             checked: true,
             dontCheckVersion: object.dontCheckVersion,
           },
-          result
+          result,
         );
       }
     }
@@ -193,8 +193,7 @@ export class LocalStorage {
    * @private
    */
   @ArgumentsIsNotNullOrUndefined()
-  private static checkPrevious(
-      object: LocalStorageInterface): null | any {
+  private static checkPrevious(object: LocalStorageInterface): null | any {
     let result: any = null;
 
     if (Is.false(object?.checked ?? true)) {
