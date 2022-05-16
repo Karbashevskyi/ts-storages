@@ -8,8 +8,6 @@ export class LocalStorage {
   static #applicationName: string;
   static #applicationVersion: string | null;
 
-  // TODO add global configuration of user id and application name and other!
-  // TODO applicationName is local, dont save to localStorage
   /**
    *
    * @param name
