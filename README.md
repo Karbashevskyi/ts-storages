@@ -1,11 +1,37 @@
 # ts-storages
 
 ```typescript
+export interface LocalStorageInterface {
+    current?: string;
+    previous?: string[];
+    checked?: boolean;
+    withApplicationName?: boolean;
+    withUserId?: boolean;
+    dontCheckVersion?: boolean;
+    json?: boolean;
+}
+```
+
+```typescript
 export declare class LocalStorage {
+    /**
+     *
+     * @param name
+     */
+    static setApplicationName(name: string): void;
     static get applicationName(): string;
-    static get version(): string;
+    static get applicationVersion(): string | null;
     static get userId(): string;
     static get prevVersionList(): string[];
+    static deleteUserData(): void;
+    static deleteApplicationData(): void;
+    /**
+     *
+     * @param section must be get from defaultState
+     */
+    static deleteSection(section: {
+        [key: string]: LocalStorageInterface;
+    }): void;
     /**
      *
      * @param object must be LocalStorageInterface
@@ -15,43 +41,28 @@ export declare class LocalStorage {
      *
      * @param object must be LocalStorageInterface type
      * @param value any type
-     * @param dontUseJsonEncode optional argument and type is boolean
      */
-    static set(object: LocalStorageInterface, value: any, dontUseJsonEncode?: boolean): void;
+    static set(object: LocalStorageInterface, value: any): void;
     /**
      *
      * @param object must be LocalStorageInterface type
-     * @param dontUseJsonDecode optional and type is boolean
      */
-    static get(object: LocalStorageInterface, dontUseJsonDecode?: boolean): any;
+    static get(object: LocalStorageInterface): any;
     /**
      *
-     * @param currentName must be string type
-     * @param previous must be array of string type
-     * @param withApplicationName optional and type is boolean
-     * @param withUserId optional and type is boolean
-     * @param dontCheckVersion optional and type is boolean
-     * @param dontUseJsonDecode optional and type is boolean
+     * @param object
      * @private
      */
     private static mergePrevious;
     /**
      *
-     * @param version must be string
-     * @param currentName must be string
-     * @param withoutUserId optional and type is boolean
-     * @param withApplicationName optional and type is boolean
+     * @param object
+     * @param prevVersion
      */
-    static buildKey({ version, currentName, withUserId, withApplicationName, }: {
-        currentName: string;
-        version?: string;
-        withUserId?: boolean;
-        withApplicationName?: boolean;
-    }): string;
+    static buildKey(object: LocalStorageInterface, prevVersion?: string): string;
     /**
      *
      * @param object must by type LocalStorageInterface
-     * @param dontUseJsonDecode must by type boolean
      * @private
      */
     private static checkPrevious;
@@ -77,32 +88,25 @@ export declare type StructureType = {
 };
 export declare const defaultState: {
     APPLICATION: {
-        NAME: {
-            CURRENT: string;
-            PREVIOUS: never[];
-            CHECKED: boolean;
-            WITH_APPLICATION_NAME: boolean;
-            DONT_CHECK_VERSION: boolean;
-        };
         VERSION: {
-            CURRENT: string;
-            PREVIOUS: never[];
-            CHECKED: boolean;
-            DONT_CHECK_VERSION: boolean;
+            current: string;
+            previous: never[];
+            checked: boolean;
+            dontCheckVersion: boolean;
         };
         PREV_VERSION: {
-            CURRENT: string;
-            PREVIOUS: never[];
-            CHECKED: boolean;
-            DONT_CHECK_VERSION: boolean;
+            current: string;
+            previous: never[];
+            checked: boolean;
+            dont_check_version: boolean;
         };
     };
     USER: {
         ID: {
-            CURRENT: string;
-            PREVIOUS: never[];
-            CHECKED: boolean;
-            DONT_CHECK_VERSION: boolean;
+            current: string;
+            previous: never[];
+            checked: boolean;
+            dont_check_version: boolean;
         };
     };
 };
@@ -114,18 +118,23 @@ export declare class LocalStorageKey {
      * @param key must be string
      * @param value must be LocalStorageInterface
      */
-    static set(category: string, key: string, value: LocalStorageInterface): void;
+    static setItem(category: string, key: string, value: LocalStorageInterface): void;
     /**
      *
      * @param category must be string
      * @param key must be string
      */
-    static remove(category: string, key: string): void;
+    static removeItem(category: string, key: string): void;
     /**
      *
-     * @param state
+     * @param state must be StructureType
      */
-    static merge(state: StructureType): void;
+    static setState(state: StructureType): void;
+    /**
+     *
+     * @param state must be StructureType
+     */
+    static mergeState(state: StructureType): void;
     static get state(): StructureType;
 }
 
