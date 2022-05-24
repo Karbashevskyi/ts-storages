@@ -1,3 +1,6 @@
+import { LocalStorageItemInterface } from './interfaces/local-storage-item.interface';
+import { ArgumentsIsNotNullOrUndefined } from 'package-ts-decorators-asserts';
+
 /**
  * {
  *   CURRENT: String of current name, // automate add to name as prefix a new data: [versionApp]
@@ -6,33 +9,26 @@
  *   DONT_CHECK_VERSION: Boolean, who say don't check version in the name of key
  * }
  */
-import { LocalStorageInterface } from './interfaces/local-storage.interface';
-import { ArgumentsIsNotNullOrUndefined } from 'package-ts-decorators-asserts';
 
-export type StructureType = { [key: string]: { [key: string]: LocalStorageInterface } };
+export type StructureType = {
+  [key: string]: {
+    [key: string]: LocalStorageItemInterface
+  }
+};
 
 // TODO make const with generic and the generic extend from default StructureType.
 export const defaultState = {
-  APPLICATION: {
-    VERSION: {
+  application: {
+    version: {
       current: `A.0`, // A - Application
-      previous: [],
-      checked: false,
-      dontCheckVersion: true,
     },
-    PREV_VERSION: {
+    prevVersion: {
       current: `A.1`, // A - Application
-      previous: [],
-      checked: false,
-      dont_check_version: true,
     },
   },
-  USER: {
-    ID: {
+  user: {
+    id: {
       current: `U.0`, // U - User
-      previous: [],
-      checked: false,
-      dont_check_version: true,
     },
   },
 };
@@ -44,10 +40,10 @@ export class LocalStorageKey {
    *
    * @param category must be string
    * @param key must be string
-   * @param value must be LocalStorageInterface
+   * @param value must be LocalStorageItemInterface
    */
   @ArgumentsIsNotNullOrUndefined()
-  public static setItem(category: string, key: string, value: LocalStorageInterface): void {
+  public static setItem(category: string, key: string, value: LocalStorageItemInterface): void {
     this.#state[category][key] = value;
   }
 

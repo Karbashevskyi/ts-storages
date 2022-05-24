@@ -1,13 +1,12 @@
 # ts-storages
 
 ```typescript
-export interface LocalStorageInterface {
+export interface LocalStorageItemInterface {
     current?: string;
     previous?: string[];
-    checked?: boolean;
     withApplicationName?: boolean;
     withUserId?: boolean;
-    dontCheckVersion?: boolean;
+    checkedPreviousVersion?: boolean;
     json?: boolean;
 }
 ```
@@ -23,31 +22,31 @@ export declare class LocalStorage {
     static get applicationVersion(): string | null;
     static get userId(): string;
     static get prevVersionList(): string[];
-    static deleteUserData(): void;
-    static deleteApplicationData(): void;
+    static user(): void;
+    static application(): void;
     /**
      *
      * @param section must be get from defaultState
      */
-    static deleteSection(section: {
-        [key: string]: LocalStorageInterface;
+    static removeSection(section: {
+        [key: string]: LocalStorageItemInterface;
     }): void;
     /**
      *
-     * @param object must be LocalStorageInterface
+     * @param object must be LocalStorageItemInterface
      */
-    static remove(object: LocalStorageInterface): void;
+    static remove(object: LocalStorageItemInterface): void;
     /**
      *
-     * @param object must be LocalStorageInterface type
+     * @param object must be LocalStorageItemInterface type
      * @param value any type
      */
-    static set(object: LocalStorageInterface, value: any): void;
+    static set(object: LocalStorageItemInterface, value: any): void;
     /**
      *
-     * @param object must be LocalStorageInterface type
+     * @param object must be LocalStorageItemInterface type
      */
-    static get(object: LocalStorageInterface): any;
+    static get(object: LocalStorageItemInterface): any;
     /**
      *
      * @param object
@@ -59,10 +58,10 @@ export declare class LocalStorage {
      * @param object
      * @param prevVersion
      */
-    static buildKey(object: LocalStorageInterface, prevVersion?: string): string;
+    static buildKey(object: LocalStorageItemInterface, prevVersion?: string): string;
     /**
      *
-     * @param object must by type LocalStorageInterface
+     * @param object must by type LocalStorageItemInterface
      * @private
      */
     private static checkPrevious;
@@ -80,10 +79,10 @@ export declare class LocalStorage {
  *   DONT_CHECK_VERSION: Boolean, who say don't check version in the name of key
  * }
  */
-import { LocalStorageInterface } from './interfaces/local-storage.interface';
+import { LocalStorageItemInterface } from './interfaces/local-storage.interface';
 export declare type StructureType = {
     [key: string]: {
-        [key: string]: LocalStorageInterface;
+        [key: string]: LocalStorageItemInterface;
     };
 };
 export declare const defaultState: {
@@ -92,21 +91,19 @@ export declare const defaultState: {
             current: string;
             previous: never[];
             checked: boolean;
-            dontCheckVersion: boolean;
+            checkedPreviousVersion: boolean;
         };
         PREV_VERSION: {
             current: string;
             previous: never[];
-            checked: boolean;
-            dont_check_version: boolean;
+            checkedPreviousVersion: boolean;
         };
     };
     USER: {
         ID: {
             current: string;
             previous: never[];
-            checked: boolean;
-            dont_check_version: boolean;
+            checkedPreviousVersion: boolean;
         };
     };
 };
@@ -116,9 +113,9 @@ export declare class LocalStorageKey {
      *
      * @param category must be string
      * @param key must be string
-     * @param value must be LocalStorageInterface
+     * @param value must be LocalStorageItemInterface
      */
-    static setItem(category: string, key: string, value: LocalStorageInterface): void;
+    static setItem(category: string, key: string, value: LocalStorageItemInterface): void;
     /**
      *
      * @param category must be string

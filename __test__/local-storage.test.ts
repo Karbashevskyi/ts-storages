@@ -29,7 +29,7 @@ describe('Test LocalStorage', () => {
         Object.assign(localStorage, localStorageMock);
 
         LocalStorage.setApplicationName(applicationName);
-        LocalStorage.set(defaultState.APPLICATION.VERSION, version);
+        LocalStorage.set(defaultState.application.version, version);
 
     });
 
@@ -45,13 +45,17 @@ describe('Test LocalStorage', () => {
         expect(LocalStorage.applicationVersion).toBe(version);
     });
 
+    it('Should localStorage has an applicationName', () => {
+        expect(LocalStorage.userId).toBe(version);
+    });
+
     it('Should add new items to LocalStorageKey', () => {
         LocalStorageKey.mergeState({
             TABLES: {
                 EXAMPLE: {
                     current: `T.0`,
                     previous: [],
-                    checked: true
+                    checkedPreviousVersion: true
                 }
             }
         });
@@ -71,3 +75,74 @@ describe('Test LocalStorage', () => {
     });
 
 });
+
+
+const get = (args: any) => {
+    console.log(args);
+    return 'Hello world';
+};
+
+class LS<T> {
+    private static state: any;
+
+    public get Get(): T {
+        return LS.state as T;
+    }
+
+    public get Set(): T {
+        return LS.state as T;
+    }
+
+    public get Remove(): T {
+        return LS.state as T;
+    }
+
+    public static getInstance<T>(state: any): LS<T> {
+
+        this.state = Object.keys(state).map((key) => {
+            return {
+                [key]: new Proxy(
+                    state[key],
+                    {
+                        get(target: T, p: string | symbol, receiver: any): any {
+                            console.log(target, p);
+                            return get((target as any)[p]);
+                        },
+                        apply(target: any, thisArg: any, argArray: any[]): any {
+                            return target(thisArg);
+                        }
+                    }
+                )
+            };
+        }).reduce((object, item) => Object.assign(object, item), {}) as T;
+
+        return new LS<T>();
+    }
+}
+
+const defaultState = {
+    application: {
+        version: {
+            current: `A.0`, // A - Application
+        },
+        prevVersion: {
+            current: `A.1`, // A - Application
+        },
+    },
+    user: {
+        id: {
+            current: `U.0`, // U - User
+        },
+    },
+};
+
+const LocalStorageV2 = LS.getInstance<typeof defaultState>(defaultState);
+
+console.log(defaultState.application.prevVersion.get());
+console.log(LocalStorageV2.Set.application.prevVersion('asd'));
+// console.log(LocalStorageV2.Get.application.prevVersion);
+//console.log(LocalStorageV2.Get.user.id);
+
+
+
+
