@@ -8,7 +8,7 @@
  */
 import { LocalStorageInterface } from './interfaces/local-storage.interface';
 import { ArgumentsIsNotNullOrUndefined } from 'package-ts-decorators-asserts';
-import {EncryptionEnum} from './enum/encryptionEnum';
+import { EncryptionEnum } from './enum/encryptionEnum';
 
 export type StructureType = { [key: string]: { [key: string]: LocalStorageInterface } };
 
@@ -32,13 +32,13 @@ export const defaultState = {
     ID: {
       current: `U.0`, // U - User
       previous: [],
-      checked: false
+      checked: false,
     },
     TOKEN: {
       current: `U.1`, // U - User
       previous: [],
       checked: false,
-      encryption: EncryptionEnum.BASE64
+      encryption: EncryptionEnum.BASE64,
     },
   },
 };

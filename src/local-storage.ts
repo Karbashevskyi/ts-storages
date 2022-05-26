@@ -102,7 +102,7 @@ export class LocalStorage {
     value = localStorage.getItem(this.buildKey(object));
 
     if (object?.encryption) {
-      value = (new Buffer(value, object?.encryption)).toString('ascii');
+      value = new Buffer(value, object?.encryption).toString('ascii');
     }
 
     if (Is.true(object?.json ?? true)) {

@@ -1,3 +1,3 @@
 export enum EncryptionEnum {
-    BASE64 = 'base64'
+  BASE64 = 'base64',
 }
