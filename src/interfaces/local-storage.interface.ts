@@ -1,4 +1,4 @@
-import {EncryptionEnum} from "../enum/encryptionEnum";
+import {EncryptionEnum} from '../enum/encryptionEnum';
 
 export interface LocalStorageInterface {
   current?: string;

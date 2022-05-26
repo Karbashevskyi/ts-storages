@@ -7,6 +7,7 @@
  * }
  */
 import { LocalStorageInterface } from './interfaces/local-storage.interface';
+import { EncryptionEnum } from './enum/encryptionEnum';
 export declare type StructureType = {
     [key: string]: {
         [key: string]: LocalStorageInterface;
@@ -24,7 +25,7 @@ export declare const defaultState: {
             current: string;
             previous: never[];
             checked: boolean;
-            dont_check_version: boolean;
+            dontCheckVersion: boolean;
         };
     };
     USER: {
@@ -32,7 +33,12 @@ export declare const defaultState: {
             current: string;
             previous: never[];
             checked: boolean;
-            dont_check_version: boolean;
+        };
+        TOKEN: {
+            current: string;
+            previous: never[];
+            checked: boolean;
+            encryption: EncryptionEnum;
         };
     };
 };

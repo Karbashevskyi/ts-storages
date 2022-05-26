@@ -8,7 +8,7 @@
  */
 import { LocalStorageInterface } from './interfaces/local-storage.interface';
 import { ArgumentsIsNotNullOrUndefined } from 'package-ts-decorators-asserts';
-import {EncryptionEnum} from "./enum/encryptionEnum";
+import {EncryptionEnum} from './enum/encryptionEnum';
 
 export type StructureType = { [key: string]: { [key: string]: LocalStorageInterface } };
 
