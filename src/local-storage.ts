@@ -80,6 +80,10 @@ export class LocalStorage {
       }
     }
     const key: string = this.buildKey(object);
+    if (object?.encryption) {
+      value = new Buffer(value);
+      value = value.toString(object?.encryption);
+    }
     localStorage.setItem(key, value);
   }
 
@@ -97,15 +101,19 @@ export class LocalStorage {
 
     value = localStorage.getItem(this.buildKey(object));
 
+    if (object?.encryption) {
+      value = (new Buffer(value, object?.encryption)).toString('ascii');
+    }
+
     if (Is.true(object?.json ?? true)) {
       try {
-        return JSON.parse(value);
+        value = JSON.parse(value);
       } catch (e) {
-        return null;
+        value = null;
       }
-    } else {
-      return value;
     }
+
+    return value;
   }
 
   /**
