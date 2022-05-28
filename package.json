@@ -1,6 +1,6 @@
 {
   "name": "ts-storages",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "The package for save data to storages in typescript.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
