@@ -1,141 +1,88 @@
 # ts-storages
+![NPM Latest Version](https://img.shields.io/npm/v/ts-storages)
+![Downloads Count](https://img.shields.io/npm/dm/ts-storages.svg)
+![Bundle Size](https://packagephobia.now.sh/badge?p=ts-storages)
+![Test Status](https://img.shields.io/travis/karbashevskyi/ts-storages/main.svg)
+![Last Update Date](https://img.shields.io/github/last-commit/karbashevskyi/ts-storages)
+![Project License](https://img.shields.io/github/license/karbashevskyi/ts-storages)
 
+## Installation
+
+```bash
+$ npm install ts-storages
+```
+
+## Interface of item
 ```typescript
-export interface LocalStorageInterface {
+interface LocalStorageInterface {
     current?: string;
-    previous?: string[];
+    previous?: string[]; // Write full name of key (like in localStorage: 0.0{Unicard-Impero360} or [1.0.0]1.1{Unicard-Impero360})
     checked?: boolean;
     withApplicationName?: boolean;
     withUserId?: boolean;
     dontCheckVersion?: boolean;
-    json?: boolean;
+    encryption?: EncryptionEnum;
+    json?: boolean; // default true
 }
 ```
 
+## Example of state
 ```typescript
-export declare class LocalStorage {
-    /**
-     *
-     * @param name
-     */
-    static setApplicationName(name: string): void;
-    static get applicationName(): string;
-    static get applicationVersion(): string | null;
-    static get userId(): string;
-    static get prevVersionList(): string[];
-    static deleteUserData(): void;
-    static deleteApplicationData(): void;
-    /**
-     *
-     * @param section must be get from defaultState
-     */
-    static deleteSection(section: {
-        [key: string]: LocalStorageInterface;
-    }): void;
-    /**
-     *
-     * @param object must be LocalStorageInterface
-     */
-    static remove(object: LocalStorageInterface): void;
-    /**
-     *
-     * @param object must be LocalStorageInterface type
-     * @param value any type
-     */
-    static set(object: LocalStorageInterface, value: any): void;
-    /**
-     *
-     * @param object must be LocalStorageInterface type
-     */
-    static get(object: LocalStorageInterface): any;
-    /**
-     *
-     * @param object
-     * @private
-     */
-    private static mergePrevious;
-    /**
-     *
-     * @param object
-     * @param prevVersion
-     */
-    static buildKey(object: LocalStorageInterface, prevVersion?: string): string;
-    /**
-     *
-     * @param object must by type LocalStorageInterface
-     * @private
-     */
-    private static checkPrevious;
-}
 
-
-```
-
-```typescript
-/**
- * {
- *   CURRENT: String of current name, // automate add to name as prefix a new data: [versionApp]
- *   PREVIOUS: Array with full name about prev names, e.g. with version app: `[0.0.1]1.0`; template `[versionApp]prevName`,
- *   CHECKED: Boolean, if initial value is "true" when fn will ignore check previous names.
- *   DONT_CHECK_VERSION: Boolean, who say don't check version in the name of key
- * }
- */
-import { LocalStorageInterface } from './interfaces/local-storage.interface';
-export declare type StructureType = {
-    [key: string]: {
-        [key: string]: LocalStorageInterface;
-    };
-};
-export declare const defaultState: {
+const state = { [key: string]: { [key: string]: LocalStorageInterface } } {
     APPLICATION: {
         VERSION: {
-            current: string;
-            previous: never[];
-            checked: boolean;
-            dontCheckVersion: boolean;
-        };
+            current: `A.0`, // A - Application
+                previous: [],
+                checked: false,
+                dontCheckVersion: true,
+        },
         PREV_VERSION: {
-            current: string;
-            previous: never[];
-            checked: boolean;
-            dont_check_version: boolean;
-        };
-    };
+            current: `A.1`, // A - Application
+                previous: [],
+                checked: false,
+                dontCheckVersion: true,
+        },
+    },
     USER: {
         ID: {
-            current: string;
-            previous: never[];
-            checked: boolean;
-            dont_check_version: boolean;
-        };
-    };
+            current: `U.0`, // U - User
+                previous: [],
+                checked: false,
+        },
+        TOKEN: {
+            current: `U.1`, // U - User
+                previous: [],
+                checked: false,
+                encryption: EncryptionEnum.BASE64,
+        },
+    },
 };
-export declare class LocalStorageKey {
-    #private;
-    /**
-     *
-     * @param category must be string
-     * @param key must be string
-     * @param value must be LocalStorageInterface
-     */
-    static setItem(category: string, key: string, value: LocalStorageInterface): void;
-    /**
-     *
-     * @param category must be string
-     * @param key must be string
-     */
-    static removeItem(category: string, key: string): void;
-    /**
-     *
-     * @param state must be StructureType
-     */
-    static setState(state: StructureType): void;
-    /**
-     *
-     * @param state must be StructureType
-     */
-    static mergeState(state: StructureType): void;
-    static get state(): StructureType;
-}
 
 ```
+
+## Examples
+```typescript
+
+    LocalStorage.setApplicationName(applicationName);
+    LocalStorage.applicationName;
+    LocalStorage.applicationVersion;
+    LocalStorage.userId;
+    LocalStorage.prevVersionList;
+    LocalStorage.deleteUserData();
+    LocalStorage.deleteApplicationData();
+
+    LocalStorage.get(state.USER.TOKEN);
+    LocalStorage.set(state.USER.TOKEN, $veriable);
+    LocalStorage.remove(state.USER.TOKEN);
+
+```
+
+## My Social Network Links
+[Twitter Profile](https://twitter.com/Karbashevskyi)
+
+[LinkedIn Profile](https://www.linkedin.com/in/ivan-karbashevskyi/)
+
+[GitHub Profile](https://github.com/Karbashevskyi)
+
+[medium.com Profile](https://medium.com/@ivankarbashevskyi)
