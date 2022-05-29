@@ -86,3 +86,5 @@ const state = { [key: string]: { [key: string]: LocalStorageInterface } } {
 [GitHub Profile](https://github.com/Karbashevskyi)
 
 [medium.com Profile](https://medium.com/@ivankarbashevskyi)
+
+[Pateron Profile](https://www.patreon.com/karbash)
