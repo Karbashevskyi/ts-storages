@@ -1,2 +1,6 @@
-export { LocalStorage } from './local-storage';
-export { LocalStorageKey } from './local-storage-keys';
+import {Models} from './models';
+
+export const Storages =  {
+    localStorage: Models.LocalStorage.Model,
+    sessionStorage: Models.SessionStorage.Model
+}

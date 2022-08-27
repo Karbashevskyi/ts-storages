@@ -46,8 +46,7 @@
     "typescript": "^4.6.3"
   },
   "dependencies": {
-    "package-ts-decorators-asserts": "^1.1.4",
-    "ts-asserts": "^0.0.0",
-    "ts-checkers": "^0.0.5"
+    "@p4ck493/ts-is": "^2.0.2",
+    "@p4ck493/ts-type-guard": "^0.0.1"
   }
 }
